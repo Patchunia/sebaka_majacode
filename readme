@@ -1,4 +1,4 @@
-I have been tasked with creating a Data base for the new version of Cash me Up
+I have been tasked with creating a Data base for the optional version of Cash me Up
 Tools that I have used is  Supabase as a ebviroment for the architecture of thwe Data base
 I will create 3 tables on the enviroment, Loans, Referrals and Customer profiles
 The whole schema will be created and secured with the Supabase data protection RLS(Row Level Security) hwich is identical to POPIA
