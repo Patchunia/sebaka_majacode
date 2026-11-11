@@ -1,0 +1,14 @@
+# OS / editor clutter
+Thumbs.db
+.DS_Store
+desktop.ini
+*.swp
+.vscode/
+.idea/
+
+# Local secrets — never commit real Supabase keys
+.env
+*.local
+
+# Agent tooling state
+.optagent/

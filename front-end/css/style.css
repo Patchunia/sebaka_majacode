@@ -1,0 +1,123 @@
+/* ============================================================
+   Cash me Up — styles
+   ============================================================ */
+
+/* ============ BRAND COLORS — change these to rebrand the app ============ */
+:root {
+  --brand: #0e7a4d;
+  --brand-dark: #0a5c3a;
+  --bg: #f3f6f4;
+  --card: #ffffff;
+  --text: #22302a;
+  --muted: #68766f;
+  --border: #d5ddd8;
+  --error: #b3261e;
+  --error-bg: #fdeceb;
+  --success: #1e6b34;
+  --success-bg: #e7f5ec;
+  --info: #3a4a6b;
+  --info-bg: #eef2fb;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px;
+  min-height: 100vh;
+}
+
+.phone-card {
+  background: var(--card);
+  width: 100%;
+  max-width: 420px;
+  border-radius: 14px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.08);
+  padding: 28px 24px;
+  align-self: flex-start;
+}
+
+.brand { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.brand-mark {
+  width: 38px; height: 38px; border-radius: 50%;
+  background: var(--brand); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; font-weight: 700;
+}
+.brand-name { font-size: 19px; font-weight: 700; letter-spacing: 0.2px; }
+h1 { font-size: 21px; margin-bottom: 4px; }
+.subtitle { font-size: 14px; color: var(--muted); margin-bottom: 18px; }
+
+/* ---------- Demo banner (shown only while the backend is mocked) ---------- */
+.demo-banner {
+  background: #fff8e6; border: 1px solid #f0d98c; border-radius: 8px;
+  padding: 10px 12px; font-size: 12.5px; color: #6b5b1e;
+  margin-bottom: 16px; line-height: 1.55;
+}
+.demo-banner code { background: #f5edd0; padding: 1px 5px; border-radius: 4px; }
+
+/* ---------- Form fields ---------- */
+label.field-label { display: block; font-size: 13.5px; font-weight: 600; margin: 14px 0 6px; }
+input[type="text"], input[type="tel"], input[type="password"] {
+  width: 100%; padding: 12px; font-size: 15px;
+  border: 1px solid var(--border); border-radius: 8px; outline: none; background: #fff;
+}
+input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px rgba(14, 122, 77, 0.14); }
+
+/* ---------- FE-2: referral code box ---------- */
+.referral-box {
+  border: 1.5px dashed var(--border); border-radius: 10px;
+  padding: 14px 12px 12px; margin-top: 18px; background: #fbfcfb;
+}
+.referral-box .optional-tag {
+  font-weight: 400; font-size: 12px; color: var(--muted);
+}
+.code-row { display: flex; gap: 8px; }
+.code-row input { flex: 1; text-transform: uppercase; }
+#apply-btn {
+  padding: 12px 16px; font-size: 14px; font-weight: 600;
+  color: #fff; background: var(--brand);
+  border: none; border-radius: 8px; cursor: pointer; white-space: nowrap;
+}
+#apply-btn:hover:not(:disabled) { background: var(--brand-dark); }
+#apply-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+
+/* ---------- FE-3: message / error states ---------- */
+.message {
+  margin-top: 10px; padding: 10px 12px; border-radius: 8px;
+  font-size: 13.5px; display: none; line-height: 1.4;
+}
+.message.info    { display: block; background: var(--info-bg); color: var(--info); }
+.message.success { display: block; background: var(--success-bg); color: var(--success); }
+.message.error   { display: block; background: var(--error-bg); color: var(--error); }
+.hint { margin-top: 10px; font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* ---------- Buttons ---------- */
+.btn-primary {
+  width: 100%; margin-top: 20px; padding: 14px;
+  font-size: 15.5px; font-weight: 700; color: #fff;
+  background: var(--brand); border: none; border-radius: 10px; cursor: pointer;
+}
+.btn-primary:hover:not(:disabled) { background: var(--brand-dark); }
+.btn-primary:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn-ghost {
+  width: 100%; margin-top: 10px; padding: 12px;
+  font-size: 14px; font-weight: 600; color: var(--brand);
+  background: transparent; border: 1px solid var(--brand); border-radius: 10px; cursor: pointer;
+}
+.alt-link { margin-top: 14px; text-align: center; font-size: 13px; color: var(--muted); }
+
+/* ---------- Screen switching ---------- */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ---------- Home screen ---------- */
+.ref-status {
+  margin-top: 18px; padding: 14px; border-radius: 10px; font-size: 14px; line-height: 1.5;
+}
+.ref-status.success { background: var(--success-bg); color: var(--success); }
+.ref-status.neutral { background: #f1f4f2; color: var(--muted); }
+.next-steps { margin-top: 16px; font-size: 13.5px; color: var(--muted); line-height: 1.6; }
