@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cash me Up — Create account</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="phone-card">
+
+    <!-- ================= SCREEN 1: SIGN-UP ================= -->
+    <section id="screen-signup" class="screen active">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <div class="brand-name">Cash me Up</div>
+      </div>
+      <h1>Create your account</h1>
+      <p class="subtitle">Sign up in a minute — you can borrow, save and refer friends.</p>
+
+      <div class="demo-banner">
+        <!-- <strong>Demo mode:</strong> the backend is not connected yet, so the referral -->
+        check is mocked in the browser. Try <code>REF-A-4821</code> (valid),
+        <code>REF-EXPIRED-1</code> (expired), <code>REF-USED-1</code> (already used),
+        or anything else (invalid). To go live, set <code>API_URL</code> in <code>js/app.js</code>.
+      </div>
+
+      <form id="signup-form" novalidate>
+        <label class="field-label" for="full-name">Full name</label>
+        <input type="text" id="full-name" placeholder="e.g. Langa Magagula" autocomplete="name">
+
+        <label class="field-label" for="phone">Phone number</label>
+        <input type="tel" id="phone" placeholder="e.g. 082 123 4567" autocomplete="tel">
+
+        <label class="field-label" for="password">Password</label>
+        <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password">
+
+        <!-- ============ FE-2: REFERRAL CODE FIELD ============ -->
+        <div class="referral-box">
+          <label class="field-label" for="code-input">Referral code <span class="optional-tag">(optional)</span></label>
+          <div class="code-row">
+            <input type="text" id="code-input" placeholder="e.g. REF-A-4821" autocomplete="off">
+            <button type="button" id="apply-btn">Apply code</button>
+          </div>
+          <!-- ============ FE-3: MESSAGE / ERROR STATES ============ -->
+          <div id="message" class="message" role="status" aria-live="polite"></div>
+        </div>
+      </form>
+
+      <button type="button" class="btn-primary" id="signup-btn">Create account</button>
+      <p class="alt-link">Already have an account? <strong>Log in</strong> (coming in Sprint 2)</p>
+    </section>
+
+    <!-- ================= SCREEN 2: HOME ================= -->
+    <section id="screen-home" class="screen">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <div class="brand-name">Cash me Up</div>
+      </div>
+      <h1>Welcome, <span id="welcome-name">friend</span>!</h1>
+      <p class="subtitle">Your account is ready.</p>
+
+      <div id="ref-status" class="ref-status neutral"></div>
+
+      <p class="next-steps">
+        <strong>What's next</strong> (Sprint 2+): apply for your first loan, set your savings goal,
+        and share your own referral code with friends.
+      </p>
+
+      <button type="button" class="btn-ghost" id="signout-btn">Sign out (demo)</button>
+    </section>
+
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>
