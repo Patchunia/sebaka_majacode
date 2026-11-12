@@ -1,0 +1,17 @@
+# Java / Maven build output
+api/target/
+
+# Local test artifacts (contain real email addresses from local runs)
+sink_mail.log
+*.log
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+~$*
+.idea/
+
+# Agent-internal folders (never commit)
+.agent-work/
+.optagent/
+.playwright-mcp/

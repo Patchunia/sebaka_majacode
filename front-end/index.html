@@ -19,10 +19,11 @@
       <p class="subtitle">Sign up in a minute — you can borrow, save and refer friends.</p>
 
       <div class="demo-banner">
-        <!-- <strong>Demo mode:</strong> the backend is not connected yet, so the referral -->
-        check is mocked in the browser. Try <code>REF-A-4821</code> (valid),
-        <code>REF-EXPIRED-1</code> (expired), <code>REF-USED-1</code> (already used),
-        or anything else (invalid). To go live, set <code>API_URL</code> in <code>js/app.js</code>.
+        <strong>Demo mode:</strong> the backend is not connected yet, so both the
+        referral check and the email code are mocked in the browser. Referral: try
+        <code>REF-A-4821</code> (valid), <code>REF-EXPIRED-1</code> (expired),
+        <code>REF-USED-1</code> (already used). Email: press "Send code", then any
+        6 digits pass verification. To go live, set <code>API_URL</code> in <code>js/app.js</code>.
       </div>
 
       <form id="signup-form" novalidate>
@@ -31,6 +32,21 @@
 
         <label class="field-label" for="phone">Phone number</label>
         <input type="tel" id="phone" placeholder="e.g. 082 123 4567" autocomplete="tel">
+
+        <!-- ============ FE-5: EMAIL VERIFICATION (Spring Boot email-code API) ============ -->
+        <div class="email-box">
+          <label class="field-label" for="email">Email address</label>
+          <input type="email" id="email" placeholder="e.g. lala@mail.com" autocomplete="email">
+
+          <label class="field-label" for="verify-input">Verification code</label>
+          <div class="code-row">
+            <input type="text" id="verify-input" placeholder="6-digit code" inputmode="numeric" maxlength="6" autocomplete="off">
+            <button type="button" id="send-code-btn">Send code</button>
+            <button type="button" id="verify-btn">Verify</button>
+          </div>
+          <div id="email-message" class="message" role="status" aria-live="polite"></div>
+          <p class="hint">We send a 6-digit code to your email. Press "Send code", then enter the code and press "Verify".</p>
+        </div>
 
         <label class="field-label" for="password">Password</label>
         <input type="password" id="password" placeholder="At least 8 characters" autocomplete="new-password">
