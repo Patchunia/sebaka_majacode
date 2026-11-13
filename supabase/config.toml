@@ -1,0 +1,9 @@
+# Merge these blocks into your existing supabase/config.toml
+
+# Users verify their email BEFORE they have an account, so no JWT is required.
+# Abuse protection comes from the rate limits inside the functions.
+[functions.send-code]
+verify_jwt = false
+
+[functions.verify-code]
+verify_jwt = false
