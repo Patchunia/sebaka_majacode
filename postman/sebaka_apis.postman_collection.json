@@ -1,0 +1,121 @@
+{
+  "info": {
+    "name": "Cash me Up (Sebaka) - APIs for front-end",
+    "description": "Postman collection for the APIs the Cash me Up front-end talks to.\n\nFolder 1 is LIVE now: Spring Boot email-code API, run locally (sebaka_backend/run-local-test.bat starts API :8080 + SMTP sink :1025 + front-end :8000). The 502 test needs the SMTP sink stopped first.\n\nFolder 2 is CONTRACT ONLY: those endpoints do not exist yet (see BACKEND_TASKS.md - T1 verify endpoint, T4 validate-referral Edge Function). Requests there will 404 today.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "emailApi",
+      "value": "http://localhost:8080",
+      "description": "Spring Boot email-code API (local run)"
+    },
+    {
+      "key": "referralApi",
+      "value": "",
+      "description": "Supabase Edge Function base URL - set to https://<project>.supabase.co/functions/v1 once Siyabonga ships T4"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Email-code API - LIVE now (Spring Boot)",
+      "item": [
+        {
+          "name": "Send verification code - expect 200",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"langa-selftest@mail.com\"\n}"
+            },
+            "url": { "raw": "{{emailApi}}/api/v1/email-codes" }
+          },
+          "description": "Precondition: SMTP sink running on 127.0.0.1:1025 (local test mailbox, part of run-local-test.bat).\n\nExpect 200 {\"message\":\"Verification code sent.\"} and the 6-digit code appended to sink_mail.log."
+        },
+        {
+          "name": "Invalid email - expect 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"not-an-email\"\n}"
+            },
+            "url": { "raw": "{{emailApi}}/api/v1/email-codes" }
+          },
+          "description": "Server-side @Email validation (EmailCodeRequest) rejects it with a 400 Bad Request body."
+        },
+        {
+          "name": "Blank email - expect 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"\"\n}"
+            },
+            "url": { "raw": "{{emailApi}}/api/v1/email-codes" }
+          },
+          "description": "Server-side @NotBlank validation rejects it with a 400 Bad Request body."
+        },
+        {
+          "name": "SMTP down - expect 502 (stop the sink FIRST)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"langa-selftest@mail.com\"\n}"
+            },
+            "url": { "raw": "{{emailApi}}/api/v1/email-codes" }
+          },
+          "description": "STOP the SMTP sink first (close its terminal / taskkill the python process), otherwise this returns 200.\n\nExpect 502 with the RFC-7807 ProblemDetail body: {\"detail\":\"The verification email could not be sent. Please try again later.\"}"
+        }
+      ]
+    },
+    {
+      "name": "2. Not deployed yet - contract only (see BACKEND_TASKS.md)",
+      "item": [
+        {
+          "name": "Verify email code - T1 (Spring; 404 today)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"langa-selftest@mail.com\",\n  \"code\": \"123456\"\n}"
+            },
+            "url": { "raw": "{{emailApi}}/api/v1/email-codes/verify" }
+          },
+          "description": "BACKEND TASK T1 - does not exist yet (today: Spring 404). Contract: send a code first with the 200 request, then verify it with the 6 digits from sink_mail.log.\n\nExpected once built: 200 {\"message\":\"Email verified.\"} / 400 generic \"The code is incorrect or has expired.\" (10-min TTL, single-use, 5-attempt cap)."
+        },
+        {
+          "name": "Validate referral - T4 (Supabase Edge Function; not deployed)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"REF-A-4821\"\n}"
+            },
+            "url": { "raw": "{{referralApi}}/validate-referral" }
+          },
+          "description": "BACKEND TASK T4 - does not exist yet. Set the collection variable referralApi to the Supabase functions URL once Siyabonga deploys it.\n\nContract (api_contract_validate_referral.md): 2xx {\"message\":\"Code applied!\"}; 4xx with one of the exact messages: \"That code isn't valid.\" / \"This code has expired.\" / \"This code has already been used.\""
+        }
+      ]
+    }
+  ]
+}
