@@ -4,22 +4,29 @@
    ============================================================ */
 
 // ============================================================
-// CONFIG — ask the back-end developer (Siyabonga) for the real
-// Supabase Edge Function URL. Leave "" to stay in demo mode.
-// Example: const API_URL = "https://<project>.supabase.co/functions/v1";
-// The call below will then POST to `${API_URL}/validate-referral`.
+// CONFIG — two back-ends, each with its own live/demo switch.
 //
-// Email-code API (Spring Boot, from api/README.md):
-//   POST {API_URL}/api/v1/email-codes   body: { "email": "..." }
+// 1) EMAIL_API_URL — the Spring Boot email-code API (in api/):
+//   POST {EMAIL_API_URL}/api/v1/email-codes   body: { "email": "..." }
 //   200 -> {"message":"Verification code sent."}
 //   400 -> invalid/blank email
 //   502 -> SMTP failed: {"detail":"The verification email could not
 //          be sent. Please try again later."}
-// NOTE: the Spring API has no "verify" endpoint yet, so verification
-// stays mocked until the backend stores the code and adds one.
+//   Local run: "http://localhost:8080". Leave "" to demo-mode the email flow.
+//   NOTE: the Spring API has no "verify" endpoint yet (back-end task T1),
+//   so verification stays mocked until it is added.
+//
+// 2) REFERRAL_API_URL — the Supabase Edge Function (back-end task T4).
+//   Ask Siyabonga for the real URL. Leave "" to stay in demo mode.
+//   Example: "https://<project>.supabase.co/functions/v1"
+//   When set, the referral check POSTs to `${REFERRAL_API_URL}/validate-referral`.
+//   Until it exists, the check runs against the in-browser mock
+//   (REF-A-4821 / REF-EXPIRED-1 / REF-USED-1).
 // ============================================================
-const API_URL = "http://localhost:8080";
+const EMAIL_API_URL = "http://localhost:8080";
+const REFERRAL_API_URL = "";
 const EMAIL_CODES_PATH = "/api/v1/email-codes";
+const REFERRAL_VALIDATE_PATH = "/validate-referral";
 
 // ---------- Element shortcuts ----------
 const screenSignup = document.querySelector("#screen-signup");
@@ -37,6 +44,23 @@ const applyBtn     = document.querySelector("#apply-btn");
 const signupBtn    = document.querySelector("#signup-btn");
 const signoutBtn   = document.querySelector("#signout-btn");
 const message      = document.querySelector("#message");
+
+// ---------- Mode banner (rendered from CONFIG so it never lies) ----------
+(function renderModeBanner() {
+  const banner = document.querySelector("#demo-banner");
+  if (!banner) return;
+  const parts = [];
+  parts.push(EMAIL_API_URL
+    ? "Email codes are <strong>live</strong> — a real 6-digit code is sent to your email."
+    : "Email codes are in <strong>demo mode</strong> — press \"Send code\", then any 6 digits pass.");
+  parts.push(REFERRAL_API_URL
+    ? "Referral check is <strong>live</strong>."
+    : "Referral check is in <strong>demo mode</strong> — try <code>REF-A-4821</code> (valid), <code>REF-EXPIRED-1</code> (expired), <code>REF-USED-1</code> (already used).");
+  if (!EMAIL_API_URL || !REFERRAL_API_URL) {
+    parts.push("To go live, set the missing URL in <code>js/app.js</code>.");
+  }
+  banner.innerHTML = parts.join(" ");
+})();
 
 // ---------- App state ----------
 let appliedCode = null;   // the verified referral code, or null
@@ -71,9 +95,9 @@ function mockValidate(code) {
   });
 }
 
-// ---------- Real backend call (when API_URL is set) ----------
+// ---------- Real backend call (when REFERRAL_API_URL is set) ----------
 async function validateWithBackend(code) {
-  const response = await fetch(`${API_URL}/validate-referral`, {
+  const response = await fetch(`${REFERRAL_API_URL}${REFERRAL_VALIDATE_PATH}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ code }),
@@ -91,7 +115,7 @@ async function applyReferralCode(code) {
   showMessage("Checking your code...", "info");
 
   try {
-    const result = API_URL
+    const result = REFERRAL_API_URL
       ? await validateWithBackend(code)
       : await mockValidate(code);
 
@@ -134,8 +158,8 @@ codeInput.addEventListener("input", () => {
 // ============================================================
 // FE-5: EMAIL VERIFICATION (Spring Boot email-code API)
 //
-// Live mode (API_URL set):
-//   "Send code" -> POST {API_URL}/api/v1/email-codes  { "email": "..." }
+// Live mode (EMAIL_API_URL set):
+//   "Send code" -> POST {EMAIL_API_URL}/api/v1/email-codes  { "email": "..." }
 //     200 -> {"message":"Verification code sent."}
 //     400 -> bad/blank email
 //     502 -> SMTP failed (their RFC-7807 ProblemDetail, field "detail")
@@ -160,7 +184,7 @@ const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // ---------- Real backend call: send the 6-digit code (200/400/502) ----------
 async function sendCodeWithBackend(email) {
-  const response = await fetch(`${API_URL}${EMAIL_CODES_PATH}`, {
+  const response = await fetch(`${EMAIL_API_URL}${EMAIL_CODES_PATH}`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ email }),
@@ -198,7 +222,7 @@ async function sendEmailCode() {
   showEmailMessage("Sending your code...", "info");
 
   try {
-    const result = API_URL
+    const result = EMAIL_API_URL
       ? await sendCodeWithBackend(email)
       : await mockSendCode();
 
@@ -251,7 +275,7 @@ async function verifyEmailCode() {
 
   try {
     // TODO(live): when the backend adds a verify endpoint, replace this with:
-    //   const response = await fetch(`${API_URL}/api/v1/email-codes/verify`, {
+    //   const response = await fetch(`${EMAIL_API_URL}/api/v1/email-codes/verify`, {
     //     method: "POST",
     //     headers: { "Content-Type": "application/json" },
     //     body: JSON.stringify({ email, code }),

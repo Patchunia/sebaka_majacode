@@ -30,8 +30,11 @@ python -m http.server 8000
 
 ## Demo mode
 
-The back-ends are not connected yet, so the referral check and the email code
-are **mocked in the browser** with a small delay to show the loading states.
+Each flow runs live or demo independently: `EMAIL_API_URL` and
+`REFERRAL_API_URL` in `js/app.js` are the switches (empty string = demo for
+that flow). Right now the email-code flow is **live** (real codes go to the
+local test mailbox) and the referral check is **mocked in the browser** with
+a small delay to show the loading states.
 
 Referral codes:
 
@@ -42,20 +45,22 @@ Referral codes:
 | `REF-USED-1` | ❌ "This code has already been used." |
 | anything else | ❌ "That code isn't valid." |
 
-Email verification: press **Send code** (no real email goes out in demo mode),
-then **any 6 digits** pass verification. The real check arrives with the
-back-end verify endpoint (see below).
+Email verification: press **Send code**, then enter the 6-digit code and
+press **Verify**. Note: only the *sending* is live — verification is still
+mocked (any 6 digits pass) until the back-end adds a verify endpoint
+(see below).
 
 ## Connecting the real back-ends
 
-There are two back-ends; `API_URL` in `js/app.js` drives both.
+There are two back-ends; `EMAIL_API_URL` and `REFERRAL_API_URL` in
+`js/app.js` drive them separately.
 
 ### A. Email-code API (Spring Boot, repo folder `api/`)
 
 From `api/README.md` — the contract the page already speaks:
 
 ```
-POST {API_URL}/api/v1/email-codes
+POST {EMAIL_API_URL}/api/v1/email-codes
 Content-Type: application/json
 {"email":"person@example.com"}
 ```
@@ -73,7 +78,7 @@ To connect:
 2. In `js/app.js` set:
 
    ```js
-   const API_URL = "http://localhost:8080";
+   const EMAIL_API_URL = "http://localhost:8080";
    ```
 
 3. **CORS**: the browser blocks cross-origin calls unless the Spring app
@@ -96,9 +101,12 @@ back-end adds e.g. `POST /api/v1/email-codes/verify` with
 
 1. Ask the back-end developer for the Supabase Edge Function URL, e.g.
    `https://<project-ref>.supabase.co/functions/v1`
-2. In `js/app.js`, set `API_URL` accordingly (note: A and B live on different
-   hosts — if they differ, split `API_URL` into two constants before going live).
-3. The page calls `POST ${API_URL}/validate-referral` with
+2. In `js/app.js`, set:
+
+   ```js
+   const REFERRAL_API_URL = "https://<project-ref>.supabase.co/functions/v1";
+   ```
+3. The page calls `POST ${REFERRAL_API_URL}/validate-referral` with
    `{ "code": "..." }` and expects back either:
 
    - success: `{ "ok": true,  "message": "Code applied!" }`
@@ -118,7 +126,7 @@ front-end/
 ├── css/
 │   └── style.css   # all styles; brand colors in the :root block at the top
 ├── js/
-│   └── app.js      # all logic; set API_URL at the top of this file
+│   └── app.js      # all logic; set EMAIL_API_URL / REFERRAL_API_URL at the top
 ├── README.md
 └── .gitignore
 ```

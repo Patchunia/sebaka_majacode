@@ -18,12 +18,9 @@
       <h1>Create your account</h1>
       <p class="subtitle">Sign up in a minute — you can borrow, save and refer friends.</p>
 
-      <div class="demo-banner">
-        <strong>Demo mode:</strong> the backend is not connected yet, so both the
-        referral check and the email code are mocked in the browser. Referral: try
-        <code>REF-A-4821</code> (valid), <code>REF-EXPIRED-1</code> (expired),
-        <code>REF-USED-1</code> (already used). Email: press "Send code", then any
-        6 digits pass verification. To go live, set <code>API_URL</code> in <code>js/app.js</code>.
+      <div class="demo-banner" id="demo-banner">
+        <!-- Filled in by js/app.js from the real CONFIG, so it always matches. -->
+        <strong>Mode:</strong> loading…
       </div>
 
       <form id="signup-form" novalidate>
